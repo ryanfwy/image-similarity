@@ -4,7 +4,7 @@ This is an efficient utility of image similarity using [MobileNet](https://arxiv
 
 Image similarity is a task mostly about feature selection of the image. Here, the Convolutional Neural Network (CNN) is used to extract features of this images. It is a better way for computer to understand them effectively.
 
-This repository use a light-weight model, the MobileNet, to extract image features, then calculate their cosine distances as matrixes. The distance of two features will lie in `[-1, 1]`, where `-1` denotes the features are the most unlike, and `1` denotes they are the most similar. Choose a porper threshhold `[-1, 1]`, the most similar images will be matched.
+This repository use a light-weight model, the MobileNet, to extract image features, then calculate their cosine distances as matrixes. The distance of two features will lie in `[-1, 1]`, where `-1` denotes the features are the most unlike, and `1` denotes they are the most similar. Choose a proper threshold `[-1, 1]`, the most similar images will be matched.
 
 ## Usage
 
@@ -22,19 +22,19 @@ id,url
 6,https://raw.githubusercontent.com/ryanfwy/image-similarity/master/demo/6.jpg
 ```
 
-After that, we can setup the number of processes that are used to request images from the urls parallelly. For example, we use 2 pocesses with this tiny demo.
+After that, we can setup the number of processes that are used to request images from the urls parallelly. For example, we use 2 processes with this tiny demo.
 
 ```python
 similarity.num_processes = 2
 ```
 
-For feature extraction, a data generator is used to predict images with model batch by batch. By default, GPU will be used if it satisfy the conditions of [Tensorflow](https://www.tensorflow.org/install/gpu). Now we can set a porper size of batch based on the memory size of our computer or server. In this demo, we set it to 16.
+For feature extraction, a data generator is used to predict images with model batch by batch. By default, GPU will be used if it satisfy the conditions of [Tensorflow](https://www.tensorflow.org/install/gpu). Now we can set a proper size of batch based on the memory size of our computer or server. In this demo, we set it to 16.
 
 ```python
 similarity.batch_size = 16
 ```
 
-After invoking the function `save_data()` two times, four self-generated files will be saved as `_*_feature.h5` and `_*_fields.csv`. We can further calculate the similarities by calling `interation()`, or load the generated files at any time afterward.
+After invoking the function `save_data()` two times, four self-generated files will be saved as `_*_feature.h5` and `_*_fields.csv`. We can further calculate the similarities by calling `iteration()`, or load the generated files at any time afterward.
 
 Totally, the full example will look like:
 
@@ -62,7 +62,7 @@ similarity = ImageSimilarity()
 similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_id'], thresh=0.745, title1='test1', title2='test2')
 ```
 
-For pratical usage, the `thresh` argument of `save_data()` is recommended bellow.
+For practical usage, the `thresh` argument of `save_data()` is recommended bellow.
 
 ```
 The threshold can be set as the following values.
@@ -71,7 +71,7 @@ The threshold can be set as the following values.
     - 0.76 = better accuracy
 ```
 
-For any other details, please check the usages of each function given by `main_mutil.py`.
+For any other details, please check the usages of each function given by `main_multi.py`.
 
 ## Requirements and Installation
 
@@ -92,7 +92,7 @@ The requirements are also listed down bellow.
 
 ## Experiment
 
-In the demo, 6 and 3 images are used to match thier similarities. The cosine distances are shown in the table.
+In the demo, 6 and 3 images are used to match their similarities. The cosine distances are shown in the table.
 
 | | <img width="100" src="./demo/3.jpg"/> | <img width="100" src="./demo/4.jpg"/> | <img width="100" src="./demo/5.jpg"/> |
 | --- | :---: | :---: | :---: |
@@ -105,7 +105,7 @@ In the demo, 6 and 3 images are used to match thier similarities. The cosine dis
 
 As it is shown, image similarity using deep neural network works fine. The distances of the matched images will roughly be greater than `0.75`.
 
-For runing efficiency, multi-processing and batch-wise prediction are used in feature extraction procedure. And thus, image requesting and processing in CPU, image prediction with model in GPU, will run simultaneously. In the procedure of similarity analysis, a matrix-wise mathematical method is used to avoid n*m iteration one by one. This may help a lot in the condition of low efficency in python iteration, especially in a huge amount.
+For running efficiency, multi-processing and batch-wise prediction are used in feature extraction procedure. And thus, image requesting and processing in CPU, image prediction with model in GPU, will run simultaneously. In the procedure of similarity analysis, a matrix-wise mathematical method is used to avoid n*m iteration one by one. This may help a lot in the condition of low efficiency in python iteration, especially in a huge amount.
 
 ## Notice
 

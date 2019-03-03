@@ -279,6 +279,6 @@ if __name__ == '__main__':
     similarity.save_data('./demo/test2.csv', ',', cols=['id', 'url'])
 
     '''Calculate similarities'''
-    result = similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_id'], thresh=0.745)
-    print('Row for source file 1, and colunm for source file 2.')
+    result = similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_url'], thresh=0.745)
+    print('Row for source file 1, and column for source file 2.')
     print(result)

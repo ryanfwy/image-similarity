@@ -105,9 +105,11 @@ In the demo, 6 and 3 images are used to match their similarities. The cosine dis
 
 As it is shown, image similarity using deep neural network works fine. The distances of the matched images will roughly be greater than `0.75`.
 
-For running efficiency, multi-processing and batch-wise prediction are used in feature extraction procedure. And thus, image requesting and processing in CPU, image prediction with model in GPU, will run simultaneously. In the procedure of similarity analysis, a matrix-wise mathematical method is used to avoid n*m iteration one by one. This may help a lot in the condition of low efficiency in python iteration, especially in a huge amount.
+For running efficiency, multi-processing and batch-wise prediction are used in feature extraction procedure. And thus, image requesting and processing in CPU, image prediction with model in GPU, will run simultaneously. In the procedure of similarity analysis, a matrix-wise mathematical method is used to avoid n*m iteration one by one. This may help a lot in the condition of low efficiency of python iteration, especially in a huge amount.
 
 ## Notice
+
+[1] By default, the programme have to get the online images from urls we prepared in `.csv`. If we want to run the code with a list of offline images, we need to override the `_sub_process()` class method by ourselves. For demo and details, please check [demo_override](./demo_override).
 
 
 ## Thanks

@@ -48,7 +48,7 @@ class ImageSimilarity():
 
         Args:
             args: parameters that pass to `sub_process`.
-                - url: url of image.
+                - path: path of the image, online url by default.
                 - fields: all other fields.
 
         Returns:
@@ -74,7 +74,7 @@ class ImageSimilarity():
 
         Args:
             paras: input parameters of all samples.
-                - url: url of image.
+                - path: path of the image, online url by default.
                 - fields: all other fields.
 
         Returns:
@@ -90,7 +90,7 @@ class ImageSimilarity():
 
         Args:
             para: input parameters of one image.
-                - url: url of image.
+                - path: path of the image, online url by default.
                 - fields: all other fields.
 
         Returns:
@@ -99,14 +99,14 @@ class ImageSimilarity():
 
         Note: If error happens, `None` will be returned.
         '''
-        url, fields = para['url'], para['fields']
+        path, fields = para['path'], para['fields']
         try:
-            res = requests.get(url)
+            res = requests.get(path)
             feature = DeepModel.preprocess_image(BytesIO(res.content))
             return feature, fields
 
         except Exception as e:
-            print('Error Downloading %s: %s' % (fields[0], e))
+            print('Error downloading %s: %s' % (fields[0], e))
 
         return None, None
 
@@ -187,7 +187,7 @@ class ImageSimilarity():
 
         lines = self.load_data_csv(fname, delimiter=delimiter, include_header=True, cols=cols)
 
-        args = [{'url': line[-1], 'fields': line} for line in lines]
+        args = [{'path': line[-1], 'fields': line} for line in lines]
 
         # Prediction
         generator = self._predict_generator(args)
@@ -206,7 +206,7 @@ class ImageSimilarity():
         print('%s: feature saved to `%s`.' % (fname, fname_feature))
 
         fname_fields = '_' + title + '_fields.csv'
-        np.savetxt(fname_fields, generator.list_of_label_fileds, delimiter='\t', fmt='%s', encoding='utf-8')
+        np.savetxt(fname_fields, generator.list_of_label_fields, delimiter='\t', fmt='%s', encoding='utf-8')
         print('%s: fields saved to `%s`.' % (fname, fname_fields))
 
         print('%s: download succeeded.' % fname)
@@ -251,9 +251,9 @@ class ImageSimilarity():
         result = [save_header]
 
         distances = DeepModel.cosine_distance(feature1, feature2)
-        indexs = np.argmax(distances, axis=1)
+        indexes = np.argmax(distances, axis=1)
 
-        for x, y in enumerate(indexs):
+        for x, y in enumerate(indexes):
             if distances[x][y] >= thresh:
                 result.append(np.concatenate((fields1[x], fields2[y]), axis=0))
 

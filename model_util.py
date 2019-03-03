@@ -84,7 +84,7 @@ class DeepModel():
 class DataSequence(Sequence):
     '''Predict generator inherit from `keras.utils.Sequence`.'''
     def __init__(self, paras, generation, batch_size=32):
-        self.list_of_label_fileds = []
+        self.list_of_label_fields = []
         self.list_of_paras = paras
         self.data_generation = generation
         self.batch_size = batch_size
@@ -100,7 +100,7 @@ class DataSequence(Sequence):
         batch_x, batch_fields = self.data_generation(paras)
 
         if idx == self.__idx:
-            self.list_of_label_fileds += batch_fields
+            self.list_of_label_fields += batch_fields
             self.__idx += 1
 
         return np.array(batch_x)

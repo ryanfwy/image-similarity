@@ -1,9 +1,9 @@
 '''Image similarity using deep features.
 
 Recommendation: the threshold of the `DeepModel.cosine_distance` can be set as the following values.
-    0.74 => for greater matches amount
-    0.75 => for balance, default
-    0.76 => for better accuracy
+    0.84 = greater matches amount
+    0.845 = balance, default
+    0.85 = better accuracy
 '''
 
 from io import BytesIO
@@ -210,10 +210,11 @@ class ImageSimilarity():
         print('%s: fields saved to `%s`.' % (fname, fname_fields))
 
         print('%s: download succeeded.' % fname)
+        print('Amount:', len(generator.list_of_label_fields))
         print('Time consumed:', datetime.datetime.now()-start)
         print()
 
-    def iteration(self, save_header, thresh=0.75, title1=None, title2=None):
+    def iteration(self, save_header, thresh=0.845, title1=None, title2=None):
         '''Calculate the cosine distance of two inputs, save the matched fields to `.csv` file.
 
         Args:
@@ -226,17 +227,14 @@ class ImageSimilarity():
 
         Note:
             1. The threshold can be set as the following values.
-                0.74 = greater matches amount
-                0.75 = balance, default
-                0.76 = better accuracy
+                0.84 = greater matches amount
+                0.845 = balance, default
+                0.85 = better accuracy
 
             2. If the generated files are exist, set `title1` or `title2` as same as the title of their source files.
                 For example, pass `test.csv` to `save_data()` will generate `_test_feature.h5` and `_test_fields.csv` files,
                 so set `title1` or `title2` to `test`, and `save_data()` will not be required to invoke.
         '''
-        print('Iteration starts.')
-        start = datetime.datetime.now()
-
         if title1 and title2:
             self._title = [title1, title2]
 
@@ -248,19 +246,30 @@ class ImageSimilarity():
         fields1 = self.load_data_csv('_' + self._title[0] + '_fields.csv', delimiter='\t', include_header=False)
         fields2 = self.load_data_csv('_' + self._title[1] + '_fields.csv', delimiter='\t', include_header=False)
 
-        result = [save_header]
+        print('%s: feature loaded, shape' % self._title[0], feature1.shape)
+        print('%s: fields loaded, length' % self._title[0], len(fields1))
+
+        print('%s: feature loaded, shape' % self._title[1], feature2.shape)
+        print('%s: fields loaded, length' % self._title[1], len(fields2))
+
+        print('Iteration starts.')
+        start = datetime.datetime.now()
 
         distances = DeepModel.cosine_distance(feature1, feature2)
         indexes = np.argmax(distances, axis=1)
 
+        result = [save_header + ['similarity']]
+
         for x, y in enumerate(indexes):
-            if distances[x][y] >= thresh:
-                result.append(np.concatenate((fields1[x], fields2[y]), axis=0))
+            dis = distances[x][y]
+            if dis >= thresh:
+                result.append(np.concatenate((fields1[x], fields2[y], np.array(['%.5f' % dis])), axis=0))
 
         if len(result) > 0:
             np.savetxt('result_similarity.csv', result, fmt='%s', delimiter='\t', encoding='utf-8')
 
         print('Iteration finished: results saved to `result_similarity.csv`.')
+        print('Amount: %d (%d * %d)' % (len(fields1)*len(fields2), len(fields1), len(fields2)))
         print('Time consumed:', datetime.datetime.now()-start)
         print()
 
@@ -279,6 +288,6 @@ if __name__ == '__main__':
     similarity.save_data('./demo/test2.csv', ',', cols=['id', 'url'])
 
     '''Calculate similarities'''
-    result = similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_url'], thresh=0.745)
+    result = similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_url'], thresh=0.845)
     print('Row for source file 1, and column for source file 2.')
     print(result)

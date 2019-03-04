@@ -2,7 +2,7 @@
 
 This is an efficient utility of image similarity using [MobileNet](https://arxiv.org/abs/1704.04861) deep neural network.
 
-Image similarity is a task mostly about feature selection of the image. Here, the Convolutional Neural Network (CNN) is used to extract features of this images. It is a better way for computer to understand them effectively.
+Image similarity is a task mostly about feature selection of the image. Here, the Convolutional Neural Network (CNN) is used to extract features of these images. It is a better way for computer to understand them effectively.
 
 This repository use a light-weight model, the MobileNet, to extract image features, then calculate their cosine distances as matrixes. The distance of two features will lie in `[-1, 1]`, where `-1` denotes the features are the most unlike, and `1` denotes they are the most similar. Choose a proper threshold `[-1, 1]`, the most similar images will be matched.
 
@@ -50,28 +50,21 @@ similarity.save_data('./demo/test1.csv', ',')
 similarity.save_data('./demo/test2.csv', ',', cols=['id', 'url'])
 
 '''Calculate similarities'''
-result = similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_url'], thresh=0.745)
+result = similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_url'], thresh=0.845)
 print('Row for source file 1, and column for source file 2.')
 print(result)
 ```
 
-or if the files are generated before:
+or if the files have been generated before:
 
 ```python
 similarity = ImageSimilarity()
-similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_id'], thresh=0.745, title1='test1', title2='test2')
+similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_id'], thresh=0.845, title1='test1', title2='test2')
 ```
 
-For practical usage, the `thresh` argument of `save_data()` is recommended bellow.
+For practical usage, the `thresh` argument of `save_data()` is recommended to be in `[0.84, 1)`. A balanced value should be `0.845`.
 
-```
-The threshold can be set as the following values.
-    - 0.74 = greater matches amount
-    - 0.75 = balance, default
-    - 0.76 = better accuracy
-```
-
-For any other details, please check the usages of each function given by `main_multi.py`.
+Any other details, please check the usages of each function given by `main_multi.py`.
 
 ## Requirements and Installation
 
@@ -92,7 +85,11 @@ The requirements are also listed down bellow.
 
 ## Experiment
 
-In the demo, 6 and 3 images are used to match their similarities. The cosine distances are shown in the table.
+In the demo, 6 and 3 images are used to match their similarities.
+
+### Accuracy
+
+The cosine distances are shown in the table.
 
 | | <img width="100" src="./demo/3.jpg"/> | <img width="100" src="./demo/4.jpg"/> | <img width="100" src="./demo/5.jpg"/> |
 | --- | :---: | :---: | :---: |
@@ -103,9 +100,18 @@ In the demo, 6 and 3 images are used to match their similarities. The cosine dis
 | <img width="100" src="./demo/5.jpg"/> | 0.57025677 | 0.54037786 | **0.9999998** |
 | <img width="100" src="./demo/6.jpg"/> | 0.5575757 | 0.5238174 | **0.91234696** |
 
-As it is shown, image similarity using deep neural network works fine. The distances of the matched images will roughly be greater than `0.75`.
+As it is shown, image similarity using deep neural network works fine. The distances of the matched images will roughly be greater than `0.84`.
+
+### Efficiency
 
 For running efficiency, multi-processing and batch-wise prediction are used in feature extraction procedure. And thus, image requesting and processing in CPU, image prediction with model in GPU, will run simultaneously. In the procedure of similarity analysis, a matrix-wise mathematical method is used to avoid n*m iteration one by one. This may help a lot in the condition of low efficiency of python iteration, especially in a huge amount.
+
+Table bellow shows the time consumption in a practical case. The results are only for reference, they will be affected easily by the network quality, the number of processes and so on.
+
+|  | Source 1 | Source 2 | Iteration |
+| :---: | :---: | :---: | :---: |
+| Amount | 13501 | 21221 | 13501 * 21221 |
+| Time Consumption | 0:35:53 | 0:17:50 | 0:00:03.913282 |
 
 ## Notice
 

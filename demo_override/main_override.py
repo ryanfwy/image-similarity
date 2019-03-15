@@ -25,6 +25,10 @@ if __name__ == "__main__":
     similarity.batch_size = 16
     similarity.num_processes = 2
 
+    '''Load source data'''
+    test1 = similarity.load_data_csv('./test1.csv', delimiter=',')
+    test2 = similarity.load_data_csv('./test2.csv', delimiter=',', cols=['id', 'path'])
+
     '''Save features and fields'''
-    similarity.save_data('./test1.csv', ',')
-    similarity.save_data('./test2.csv', ',', cols=['id', 'path'])
+    similarity.save_data('test1', test1)
+    similarity.save_data('test2', test2)

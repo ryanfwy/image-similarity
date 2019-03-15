@@ -168,13 +168,12 @@ class ImageSimilarity():
 
 
 
-    def save_data(self, fname, delimiter, cols=None):
-        '''Load images from `.csv`, extract features and fields, save as `.h5` and `.csv` files.
+    def save_data(self, title, lines):
+        '''Load images from `url`, extract features and fields, save as `.h5` and `.csv` files.
 
         Args:
-            fname: name or path to the file.
-            delimiter: delimiter to split the content.
-            cols: a list of columns to read. Pass `None` to read all columns.
+            title: title to save the results.
+            lines: lines of the source data. `url` should be placed at the end of all the fields.
 
         Returns:
             None. `.h5` and `.csv` files will be saved instead.
@@ -183,10 +182,8 @@ class ImageSimilarity():
         if self._model is None:
             self._model = DeepModel()
 
-        print('%s: download starts.' % fname)
+        print('%s: download starts.' % title)
         start = datetime.datetime.now()
-
-        lines = self.load_data_csv(fname, delimiter=delimiter, include_header=True, cols=cols)
 
         args = [{'path': line[-1], 'fields': line} for line in lines]
 
@@ -195,8 +192,6 @@ class ImageSimilarity():
         features = self._model.extract_feature(generator)
 
         # Save files
-        title = fname.split('/')[-1].split('.')[0]
-
         if len(self._title) == 2:
             self._title = []
         self._title.append(title)
@@ -204,13 +199,13 @@ class ImageSimilarity():
         fname_feature = '_' + title + '_feature.h5'
         with h5py.File(fname_feature, mode='w') as h:
             h.create_dataset('data', data=features)
-        print('%s: feature saved to `%s`.' % (fname, fname_feature))
+        print('%s: feature saved to `%s`.' % (title, fname_feature))
 
         fname_fields = '_' + title + '_fields.csv'
         np.savetxt(fname_fields, generator.list_of_label_fields, delimiter='\t', fmt='%s', encoding='utf-8')
-        print('%s: fields saved to `%s`.' % (fname, fname_fields))
+        print('%s: fields saved to `%s`.' % (title, fname_fields))
 
-        print('%s: download succeeded.' % fname)
+        print('%s: download succeeded.' % title)
         print('Amount:', len(generator.list_of_label_fields))
         print('Time consumed:', datetime.datetime.now()-start)
         print()
@@ -284,9 +279,13 @@ if __name__ == '__main__':
     similarity.batch_size = 16
     similarity.num_processes = 2
 
+    '''Load source data'''
+    test1 = similarity.load_data_csv('./demo/test1.csv', delimiter=',')
+    test2 = similarity.load_data_csv('./demo/test2.csv', delimiter=',', cols=['id', 'url'])
+
     '''Save features and fields'''
-    similarity.save_data('./demo/test1.csv', ',')
-    similarity.save_data('./demo/test2.csv', ',', cols=['id', 'url'])
+    similarity.save_data('test1', test1)
+    similarity.save_data('test2', test2)
 
     '''Calculate similarities'''
     result = similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_url'], thresh=0.845)

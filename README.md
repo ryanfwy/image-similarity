@@ -66,7 +66,7 @@ similarity = ImageSimilarity()
 similarity.iteration(['test1_id', 'test1_url', 'test2_id', 'test2_id'], thresh=0.845, title1='test1', title2='test2')
 ```
 
-For practical usage, the `thresh` argument of `save_data()` is recommended to be in `[0.84, 1)`. A balanced value should be `0.845`.
+For practical usage, the `thresh` argument of `save_data()` is recommended to be in `[0.84, 1)`. One balanced value can be `0.845`.
 
 Any other details, please check the usages of each function given by `main_multi.py`.
 
@@ -110,7 +110,7 @@ As it is shown, image similarity using deep neural network works fine. The dista
 
 For running efficiency, multi-processing and batch-wise prediction are used in feature extraction procedure. And thus, image requesting and processing in CPU, image prediction with model in GPU, will run simultaneously. In the procedure of similarity analysis, a matrix-wise mathematical method is used to avoid n*m iteration one by one. This may help a lot in the condition of low efficiency of python iteration, especially in a huge amount.
 
-Table bellow shows the time consumption in a practical case. The results are only for reference, they will be affected easily by the network quality, the number of processes and so on.
+Table bellow shows the time consumption runing with 8 processes in a practical case. The results are only for reference, they may change a lot based on the number of processes we use, the quality of the network, the image size of the online resources and so on.
 
 |  | Source 1 | Source 2 | Iteration |
 | :---: | :---: | :---: | :---: |

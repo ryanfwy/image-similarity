@@ -9,6 +9,7 @@ Recommendation: the threshold of the `DeepModel.cosine_distance` can be set as t
 from io import BytesIO
 from multiprocessing import Pool
 
+import os
 import datetime
 import numpy as np
 import requests
@@ -20,6 +21,7 @@ from model_util import DeepModel, DataSequence
 class ImageSimilarity():
     '''Image similarity.'''
     def __init__(self):
+        self._tmp_dir = './__generated__'
         self._batch_size = 64
         self._num_processes = 4
         self._model = None
@@ -196,12 +198,15 @@ class ImageSimilarity():
             self._title = []
         self._title.append(title)
 
-        fname_feature = '_' + title + '_feature.h5'
+        if not os.path.isdir(self._tmp_dir):
+            os.mkdir(self._tmp_dir)
+
+        fname_feature = os.path.join(self._tmp_dir, '_' + title + '_feature.h5')
         with h5py.File(fname_feature, mode='w') as h:
             h.create_dataset('data', data=features)
         print('%s: feature saved to `%s`.' % (title, fname_feature))
 
-        fname_fields = '_' + title + '_fields.csv'
+        fname_fields = os.path.join(self._tmp_dir, '_' + title + '_fields.csv')
         np.savetxt(fname_fields, generator.list_of_label_fields, delimiter='\t', fmt='%s', encoding='utf-8')
         print('%s: fields saved to `%s`.' % (title, fname_fields))
 
@@ -236,11 +241,11 @@ class ImageSimilarity():
 
         assert len(self._title) == 2, 'Two inputs are required.'
 
-        feature1 = self.load_data_h5('_' + self._title[0] + '_feature.h5')
-        feature2 = self.load_data_h5('_' + self._title[1] + '_feature.h5')
+        feature1 = self.load_data_h5(os.path.join(self._tmp_dir, '_' + self._title[0] + '_feature.h5'))
+        feature2 = self.load_data_h5(os.path.join(self._tmp_dir, '_' + self._title[1] + '_feature.h5'))
 
-        fields1 = self.load_data_csv('_' + self._title[0] + '_fields.csv', delimiter='\t', include_header=False)
-        fields2 = self.load_data_csv('_' + self._title[1] + '_fields.csv', delimiter='\t', include_header=False)
+        fields1 = self.load_data_csv(os.path.join(self._tmp_dir, '_' + self._title[0] + '_fields.csv'), delimiter='\t', include_header=False)
+        fields2 = self.load_data_csv(os.path.join(self._tmp_dir, '_' + self._title[1] + '_fields.csv'), delimiter='\t', include_header=False)
 
         print('%s: feature loaded, shape' % self._title[0], feature1.shape)
         print('%s: fields loaded, length' % self._title[0], len(fields1))

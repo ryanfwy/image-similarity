@@ -34,7 +34,7 @@ For feature extraction, a data generator is used to predict images with model ba
 similarity.batch_size = 16
 ```
 
-After invoking the function `save_data()` two times, four self-generated files will be saved as `_*_feature.h5` and `_*_fields.csv`. We can further calculate the similarities by calling `iteration()`, or load the generated files at any time afterward.
+After invoking the function `save_data()` two times, four self-generated files will be saved into `__generated__` directory with the file names of `_*_feature.h5` and `_*_fields.csv`. We can further calculate the similarities by calling `iteration()`, or load the generated files at any time afterward.
 
 Totally, the full example will look like:
 
